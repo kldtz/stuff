@@ -1,4 +1,5 @@
 import asyncio
+import argparse
 import json
 
 import aiohttp
@@ -32,7 +33,16 @@ async def get_all_reddit_tops(topics, limit=5):
         print('{:>6}'.format(sum(responses)))
 
 
-if __name__ == '__main__':
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('topics', nargs='*', default=['coding', 'compsci', 'python', 'programming'])
+    parser.add_argument('-n', default=5, type=int, dest='n')
+    args = parser.parse_args()
+
     loop = asyncio.get_event_loop()
-    future = asyncio.ensure_future(get_all_reddit_tops(['coding', 'compsci', 'python', 'programming']))
+    future = asyncio.ensure_future(get_all_reddit_tops(args.topics, args.n))
     loop.run_until_complete(future)
+
+
+if __name__ == '__main__':
+    main()
