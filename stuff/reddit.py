@@ -1,8 +1,10 @@
-import asyncio
 import argparse
+import asyncio
 import json
 
 import aiohttp
+
+REDDIT_URL = 'https://www.reddit.com'
 
 
 async def get_json(client, url):
@@ -12,15 +14,19 @@ async def get_json(client, url):
 
 
 async def get_reddit_top(subreddit, client, limit):
-    dat = await get_json(client, f'https://www.reddit.com/r/{subreddit}/top.json?sort=top&t=day&limit={limit}')
+    dat = await get_json(client, f'{REDDIT_URL}/r/{subreddit}/top.json?sort=top&t=day&limit={limit}')
     score_sum = 0
     json_dict = json.loads(dat.decode('utf-8'))
-    print(subreddit.title())
+    print(f'=== {subreddit.title()} ===')
     for child in json_dict['data']['children']:
         score = child['data']['score']
         title = child['data']['title']
         link = child['data']['url']
-        print("{:>6}: {} ({})".format(score, title, link))
+        permalink = child['data']['permalink']
+        print(f"{score:>6}: {title}")
+        print(f"{'':>8}  Discussion: {REDDIT_URL + permalink}")
+        if permalink not in link:
+            print(f"{'':>8}  Link: {'':>6}{link}")
         score_sum += score
     return score_sum
 
