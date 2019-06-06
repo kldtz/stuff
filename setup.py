@@ -5,10 +5,11 @@ setup(name='stuff',
       packages=['stuff'],
       description='Random stuff',
       install_requires=[
-          'aiohttp'
+          'aiohttp', 'redis'
       ],
       entry_points={
           'console_scripts': [
-              'reddit = stuff.reddit:main'
+              'reddit = stuff.reddit:main',
+              'wiki = stuff.wikipedia:main'
           ]
       })
