@@ -1,32 +1,10 @@
 import argparse
-import bz2
 import re
-import xml.etree.ElementTree as ET
 
 import redis
-
-DEFAULT_NAMESPACE = '{http://www.mediawiki.org/xml/export-0.10/}'
-PAGE = DEFAULT_NAMESPACE + 'page'
-TITLE = DEFAULT_NAMESPACE + 'title'
-TEXT = DEFAULT_NAMESPACE + 'text'
+from stuff.wiki_parser import iterate_pages
 
 LINK = re.compile(r'\[\[(?:([^:\]|]+)?:)?([^:\]|#]+)(?:#([^|\]]+))?\]\]')
-
-
-def iterate_pages(wiki_dump):
-    title, text = '', ''
-    with bz2.open(wiki_dump, 'r') as dump:
-        for event, elem in ET.iterparse(dump, events=("start", "end")):
-            if event == "start" and elem.tag == PAGE:
-                title, text = '', ''
-            if event == "start" and elem.tag == TITLE:
-                title = elem.text
-            if event == "end" and elem.tag == TEXT:
-                text = "".join(elem.itertext())
-            if event == "end" and elem.tag == PAGE:
-                if title and text:
-                    yield title, text
-            elem.clear()
 
 
 def extract_links(wiki_dump):
@@ -65,8 +43,4 @@ def main():
 
 
 if __name__ == '__main__':
-    wiki_dump = '/home/tobias/data/wiki/dewiki-latest-pages-articles.xml.bz2'
-    r = redis.StrictRedis(host='localhost', port=6379)
-    # write_wiki_to_redis(r, wiki_dump)
-    leipzig = get_values(r, 'Leipzig')
-    print(leipzig.intersection(get_values(r, 'Berlin')))
+    main()
