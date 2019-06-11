@@ -16,14 +16,14 @@ def iterate_pages(wiki_dump):
             if event == 'start':
                 if tag == MEDIAWIKI:
                     root = elem
-                if tag == PAGE:
+                elif tag == PAGE:
                     title, text = '', ''
-            if event == 'end':
+            elif event == 'end':
                 if tag == TITLE and not title:  # first title under page
                     title = ''.join(elem.itertext())
-                if tag == TEXT and not text:  # first text under page
+                elif tag == TEXT and not text:  # first text under page
                     text = ''.join(elem.itertext())
-                if tag == PAGE:
+                elif tag == PAGE:
                     if title and text:
                         yield title, text
                     root.clear()
